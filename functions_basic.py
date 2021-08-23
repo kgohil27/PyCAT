@@ -270,6 +270,23 @@ def surface_tension_temp(T,a=241.322,b=1.26,c=0.0589,d=0.5,e=0.56917,Tc=647.096)
     return sigma*10**-3
 
 def find_nearest(array, value):
+    
+    """ detects the index of the value closest to the desired value
+    in a given array.
+    
+    Parameters
+    ----------
+    array: multielement array
+        contains elements of any possible data type (int, float, string)
+    value: data value
+        desired value of any possible data type (int, float, string)
+    
+    Returns
+    -------
+    idx: int
+        index of the element closest to the desired value in array
+    """
+    
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return idx
