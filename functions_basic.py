@@ -90,16 +90,20 @@ def CCN_time_ref(dfCCN, timeFile):
     CCNtimeVals = np.array(dfTime['Start Time'].tolist())
     
     refTimestamp = datetime.strptime(dfCCN.Time[0], '%H:%M:%S')
+    print (refTimestamp)
     refTime = refTimestamp.second + refTimestamp.minute*60. +refTimestamp.hour*3600.
     for index in range(len(CCNtimeVals)):
         timestamp = datetime.strptime(CCNtimeVals[index], '%H:%M:%S')
         time = timestamp.second + timestamp.minute*60. + timestamp.hour*3600.
+        print ('Testing!', time, refTime)
         if time <= refTime:
+            print ('We are in continue!!', type(CCNtimeVals[index]))    
             continue
         else:
+            print ('We are in break!!', type(CCNtimeVals[index]))    
             CCNrefIndex = index
             break
-        
+    
     return CCNtimeVals, CCNrefIndex
 
 def gaussian(x, amp, cen, wid):
@@ -270,23 +274,6 @@ def surface_tension_temp(T,a=241.322,b=1.26,c=0.0589,d=0.5,e=0.56917,Tc=647.096)
     return sigma*10**-3
 
 def find_nearest(array, value):
-    
-    """ detects the index of the value closest to the desired value
-    in a given array.
-    
-    Parameters
-    ----------
-    array: multielement array
-        contains elements of any possible data type (int, float, string)
-    value: data value
-        desired value of any possible data type (int, float, string)
-    
-    Returns
-    -------
-    idx: int
-        index of the element closest to the desired value in array
-    """
-    
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return idx
@@ -410,11 +397,7 @@ def SS_correction(df, kappa_analytical=0.6046, Mw=0.018, R=8.314, rho=1000):
         
         corrected_SS.append(round(S*100, 3))
         
-    print (corrected_SS)
-        
     df['Corrected supersaturation'] = pd.Series(corrected_SS, index=df.index)
-    
-    print (df)
     
     return df
 

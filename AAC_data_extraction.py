@@ -7,7 +7,7 @@ Created on Fri May  7 17:56:51 2021
 
 import numpy as np
 
-import functions_basic as fb
+from . import functions_basic as fb
 
 from datetime import datetime
 from sklearn.linear_model import LinearRegression

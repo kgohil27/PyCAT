@@ -12,7 +12,7 @@ import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
-import functions_basic as fb
+from . import functions_basic as fb
 
 class CCNC_Calibration(object):
     
@@ -135,6 +135,7 @@ class CCNC_Calibration(object):
             measured = measured[measured <= q75]
             corrected.append(round(np.mean(measured[~np.isnan(measured)]), 3))
         
+#       print (instrument, corrected)
         model = LinearRegression()
         model.fit(np.array(instrument).reshape(-1,1),
                   np.nan_to_num(corrected, nan=np.mean(instrument), posinf=np.mean(instrument), neginf=np.mean(instrument)))
@@ -147,12 +148,16 @@ class CCNC_Calibration(object):
 #        ax3.text(0.5, 0.7, 'Fit score (R$^2$) ='+str(round(r2_score(np.array(instrument_line).reshape(-1,1), corrected_line), 4)))
         corrected.sort()
         corrected_line.sort()
-        nanindices = np.argwhere(np.isnan(corrected))[0]
-        for index in sorted(nanindices, reverse=True):
-            print (index)
-            corrected = np.delete(corrected, index)
-            corrected_line = np.delete(corrected_line, index)
-            
+        
+#       print (corrected, corrected_line)
+        if np.isnan(np.sum(corrected)):
+            nanindices = np.argwhere(np.isnan(corrected))[0]
+            for index in sorted(nanindices, reverse=True):
+                corrected = np.delete(corrected, index)
+                corrected_line = np.delete(corrected_line, index)
+        else:
+            pass
+        
         ax3.text(0.5, 0.7, 'Fit score (R$^2$) ='+str(round(r2_score(np.array(corrected),
                                                            np.array(corrected_line)), 4)))
         ax3.set_xlabel('Instrument supersaturation')

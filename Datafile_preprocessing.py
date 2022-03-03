@@ -22,14 +22,14 @@ import matplotlib as mpl
 mpl.style.use('default')
 
 import matplotlib.pyplot as plt
-import functions_basic as fb
+from . import functions_basic as fb
 importlib.reload(fb)
-import AAC_data_extraction as de
+from . import AAC_data_extraction as de
 importlib.reload(de)
 
 class SMPS_data_process(object):
     
-    def __init__(self, basedir, basefile, data, time, offset=0, sigmoids=1):
+    def __init__(self, basedir, basefile, data, time, offset=0, sigmoids=1, downscan='no'):
         
         self.basedir = basedir
         self.basefile = basefile
@@ -37,6 +37,7 @@ class SMPS_data_process(object):
         self.time = time
         self.offset = offset
         self.sigmoids = sigmoids
+        self.downscan = downscan
     
     def data_generation(self, start_dia=0., end_dia=9.9e36, flow_rate=1.):
         
@@ -59,6 +60,7 @@ class SMPS_data_process(object):
         activation_dataframe_cols = np.append(['Diameters'], times)
         
         CCN_activation_dataframe = pd.DataFrame(columns=activation_dataframe_cols)
+        CCN_activation_fit = pd.DataFrame(columns=activation_dataframe_cols)
         
         CNdf = pd.read_csv(self.data, sep='\t')
         
@@ -67,9 +69,24 @@ class SMPS_data_process(object):
         dfCCN = pd.concat([pd.read_csv(f, skiprows=4) for f in allcsv]).reset_index(drop=True)
         dfCCN.columns = dfCCN.columns.str.strip()
         
+#        time0, timelen = np.array(dfCCN.Time)[0], len(np.array(dfCCN.Time))
+#        time_tmp = []
+#        a = datetime.strptime(time0, "%H:%M:%S")
+#        for i in range(timelen):
+#            if i == 0:
+#                time_tmp.append(time0)
+#            else:
+#                b = a + timedelta(seconds=i)
+#                b = b.time().strftime("%H:%M:%S")
+#                time_tmp.append(b)
+#        
+#        dfCCN.Time = time_tmp
+        
         CCNtimeVals, CCNrefIndex = fb.CCN_time_ref(dfCCN, self.time)
+#       print (CCNrefIndex)
         
         database = pd.DataFrame(columns=['Time stamp',
+                                         'Scan #',
                                          'Activation diameter',
                                          'Supersaturation',
                                          'Temperature',
@@ -91,6 +108,8 @@ class SMPS_data_process(object):
                 count = np.array(CNdf['Counts'+str(timeIndex+beginIndex+CCNrefIndex)].tolist())
                 diameter = np.array(CNdf['Diameter'+str(timeIndex+beginIndex+CCNrefIndex)].tolist())
                 index = np.where(self.time==120)[0][0]
+                
+#               print ('Scan number = '+str(timeIndex))
         
                 idInflection = fb.inflection_index(self.time[index:], count[index:])
                 
@@ -126,14 +145,13 @@ class SMPS_data_process(object):
                     indexInterim = fb.inflection_index(X, CCN_conc[:20])
                     
                     if indexInterim <= len(X):
-                        print (timeIndex)
                         xval = np.linspace(min(X), max(X), len(X), endpoint=True)[indexInterim]
                         idInflection = min(range(len(X)), key=lambda i: abs(X[i]-xval)) + self.offset
                 
                         """ This is the cropping of the correct CCN dataset for the CN dataset
                         under consideration, by aligning the inflection points of the downscan
                         measurements of both datasets."""
-                
+                        
                         startIndex = dfCCN[dfCCN.Time == timestr].index[0]
                         trueStartIndex = startIndex + idInflection
                         trueCCN = dfCCN['CCN Number Conc'].values.tolist()[trueStartIndex:trueStartIndex+135]
@@ -156,11 +174,23 @@ class SMPS_data_process(object):
                             trueDia.append(mean)
                         trueDia = [x for x in trueDia if str(x) != 'nan']
                         
-                        X_CCN = np.linspace(1,135,135,endpoint=True)
-                        
+                        if self.downscan == 'no':
+                            plot_index = 120
+                            X_CCN = np.logspace(np.log10(8.06), np.log10(352.3), 120)
+                        elif self.downscan == 'yes':
+                            plot_index = 135
+                            X_CCN = np.linspace(1, plot_index, plot_index, endpoint=True)
+                                                
                         try:
-                            plt.plot(X_CCN, [1.1*val for val in trueCN], 'r-', label='CN')
-                            plt.plot(X_CCN, trueCCN, 'b-', label='CCN')
+                            plt.xscale('log')
+                            plt.plot(X_CCN, [1.1*val for val in trueCN][:plot_index], color='C0', marker='s',
+                                     markerfacecolor='none', ls='none', label='CN')
+                            plt.plot(X_CCN, trueCCN[:plot_index], color='C1', marker='^',
+                                     markerfacecolor='none', ls='none', label='CCN')
+                            plt.xticks(fontsize=15)
+                            plt.yticks(fontsize=15)
+                            plt.xlabel('Mobility diameter (nm)', fontsize=15)
+                            plt.ylabel('Number distribution', fontsize=15)
                             plt.show()
                             
                             Ratio = []
@@ -191,23 +221,31 @@ class SMPS_data_process(object):
                                 inflectionInds, _ = find_peaks(np.gradient(RatioFit))            
                                 dia_fit = np.linspace(min(diaPlot), max(diaPlot), 101)
                                 diameters = np.array(dia_fit)[inflectionInds]
-                                plt.plot(diaPlot, RatioPlot, ls='None', marker='.', color='C0')
-                                plt.plot(diaPlot, RatioPlotCorrected, ls='None', marker='.', color='C1')
+#                                plt.plot(diaPlot, RatioPlot, ls='None', marker='^',
+#                                         markerfacecolor='none', color='red')
+                                plt.plot(diaPlot, RatioPlotCorrected, ls='None', marker='s',
+                                         markerfacecolor='none', color='green')
                                 plt.plot(dia_fit, RatioFit, 'black', '--')
-                                plt.xlim([start_dia-5, end_dia+5])
-    #                            plt.ylim(-0.05, 1.1)
+                                plt.plot(np.linspace(20, 120, 10), [0.5]*10, 'r--')
+                                plt.xlim([min(diaPlot)-5, max(diaPlot)+5])
+                                plt.ylim([-0.05, 1.1])
+                                plt.xticks(fontsize=15)
+                                plt.yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+                                plt.xlabel('Mobility diameter (nm)', fontsize=15)
+                                plt.ylabel('$N_{CCN}/N_{CN}$', fontsize=15)
                                 plt.show()
                                 if len(diameters) != 0:
                                     if len(diameters) == 1:
-                                        to_append = [timestr, round(diameters[0],3), supersaturation, temperature, sigma]
+                                        to_append = [timestr, timeIndex, round(diameters[0],3), supersaturation, temperature, sigma]
                                         database.loc[len(database)] = to_append
                                     elif len(diameters > 1):
                                         diameters = [round(dia,3) for dia in diameters]
-                                        to_append = [timestr, diameters, supersaturation, temperature, sigma]
+                                        to_append = [timestr, timeIndex, diameters, supersaturation, temperature, sigma]
                                         database.loc[len(database)] = to_append
-                                    
+                                CCN_activation_fit[times[timeIndex]] = RatioFit
+                                
                             except (RuntimeError, ValueError):
-                                print ('Optimal parameters for the sigmoid not found and/or sigmoid could not be optimized.')
+#                               print ('Optimal parameters for the sigmoid not found and/or sigmoid could not be optimized.')
                         except ValueError:
                             pass
                     else:
@@ -218,8 +256,9 @@ class SMPS_data_process(object):
                 break
         
         CCN_activation_dataframe['Diameters'] = diaPlot
+        CCN_activation_fit['Diameters'] = dia_fit
         
-        return database, CCN_activation_dataframe
+        return database, CCN_activation_dataframe, CCN_activation_fit
 
 class AAC_data_process(object):
     
