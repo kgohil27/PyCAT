@@ -18,10 +18,11 @@ setup(
         "numba==0.45.1",
         "numpy==1.17.3",
         "pandas==0.25.2",
+        "re==2.2.1",
         "scikit-learn==0.21.3",
         "scipy==1.3.1",
+        "seaborn==0.11.2",
         "xarray==0.12.3",
-        "seaborn==0.11.2"
       ],
   classifiers=[
         "Development Status :: 5 - Production/Stable",
