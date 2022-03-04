@@ -100,7 +100,7 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: BSD 3-Clause License",
+        "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Operating System :: Unix",
         "Programming Language :: Python :: 3.5",
