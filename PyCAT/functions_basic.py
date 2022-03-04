@@ -35,10 +35,12 @@ def processing(filename, newFile, timeFile, references, timestring, delete_strin
     
     """
     
-    with open(filename) as My_File:
+    with open(filename, 'r', encoding='utf-8',
+                 errors='ignore') as My_File:
         lines = My_File.readlines()
         
-    with open(filename) as My_File:
+    with open(filename, 'r', encoding='utf-8',
+                 errors='ignore') as My_File:
         for num, line in enumerate(My_File, 1):        
             if any(keyword in line for keyword in references):
                 if 'Comment' in line:               # 'Comment' is one the keywords in the file - it marks the end of the raw file
@@ -56,7 +58,8 @@ def processing(filename, newFile, timeFile, references, timestring, delete_strin
         file.write(time_array)
     
     # writing into the SMPS datafile with the relevant CPC data                    
-    with open(filename) as My_File:    
+    with open(filename, 'r', encoding='utf-8',
+                 errors='ignore') as My_File:    
         lines = islice(My_File, startLine-1, endLine)
         with open(newFile, 'w') as SMPS_file:
             for line in lines:    
@@ -89,9 +92,10 @@ def CCN_time_ref(dfCCN, timeFile):
     dfTime = pd.read_csv(timeFile)
     CCNtimeVals = np.array(dfTime['Start Time'].tolist())
     
-    refTimestamp = datetime.strptime(dfCCN.Time[0], '%H:%M:%S')
-    print (refTimestamp)
-    refTime = refTimestamp.second + refTimestamp.minute*60. +refTimestamp.hour*3600.
+    references = [datetime.strptime(time, '%H:%M:%S') for time in dfCCN.Time]
+    timestamps = [ref.second + ref.minute*60. +ref.hour*3600. for ref in references]
+
+    refTime = min(timestamps)
     for index in range(len(CCNtimeVals)):
         timestamp = datetime.strptime(CCNtimeVals[index], '%H:%M:%S')
         time = timestamp.second + timestamp.minute*60. + timestamp.hour*3600.
