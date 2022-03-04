@@ -83,7 +83,7 @@ class SMPS_data_process(object):
 #        dfCCN.Time = time_tmp
         
         CCNtimeVals, CCNrefIndex = fb.CCN_time_ref(dfCCN, self.time)
-#       print (CCNrefIndex)
+        print (CCNrefIndex)
         
         database = pd.DataFrame(columns=['Time stamp',
                                          'Scan #',
@@ -109,7 +109,7 @@ class SMPS_data_process(object):
                 diameter = np.array(CNdf['Diameter'+str(timeIndex+beginIndex+CCNrefIndex)].tolist())
                 index = np.where(self.time==120)[0][0]
                 
-#               print ('Scan number = '+str(timeIndex))
+                print ('Scan number = '+str(timeIndex))
         
                 idInflection = fb.inflection_index(self.time[index:], count[index:])
                 
@@ -245,7 +245,7 @@ class SMPS_data_process(object):
                                 CCN_activation_fit[times[timeIndex]] = RatioFit
                                 
                             except (RuntimeError, ValueError):
-#                               print ('Optimal parameters for the sigmoid not found and/or sigmoid could not be optimized.')
+                                print ('Optimal parameters for the sigmoid not found and/or sigmoid could not be optimized.')
                         except ValueError:
                             pass
                     else:
