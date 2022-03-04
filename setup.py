@@ -2,7 +2,65 @@
 @author: Kanishk Gohil; kgohil@umd.edu
 """
 
-from distutils.core import setup
+try:
+    from setuptools import setup
+
+    HAS_SETUPTOOLS = True
+except ImportError:
+    from distutils.core import setup
+
+import os
+import warnings
+from textwrap import dedent
+
+MAJOR, MINOR = 1, 0
+DEV = True
+VERSION = "{}.{}".format(MAJOR, MINOR)
+
+# Correct versioning with git info if DEV
+if DEV:
+    import subprocess
+
+    pipe = subprocess.Popen(
+        ["git", "describe", "--always", "--match", "'v[0-9]*'"],
+        stdout=subprocess.PIPE,
+    )
+    so, err = pipe.communicate()
+
+    if pipe.returncode != 0:
+        # no git or something wrong with git (not in dir?)
+        warnings.warn(
+            "WARNING: Couldn't identify git revision, using generic version string"
+        )
+        VERSION += ".dev"
+    else:
+        git_rev = so.strip()
+        git_rev = git_rev.decode("ascii")  # necessary for Python >= 3
+
+        VERSION += ".dev-" + format(git_rev)
+
+extensions = [
+    # Numba AOT extension module
+    # auxcc.distutils_extension(),
+]
+
+def _write_version_file():
+
+    fn = os.path.join(os.path.dirname(__file__), "PyCAT", "version.py")
+
+    version_str = dedent(
+        """
+        __version__ = '{}'
+        """
+    )
+
+    # Write version file
+    with open(fn, "w") as version_file:
+        version_file.write(version_str.format(VERSION))
+
+# Write version and install
+_write_version_file()
+
 setup(
   name = 'pycntl',         # How you named your package folder (MyLib)
   packages = ['PyCAT'],   # Chose the same as "name"
