@@ -64,7 +64,7 @@ _write_version_file()
 setup(
   name = 'pycntl',         # How you named your package folder (MyLib)
   packages = ['PyCAT'],   # Chose the same as "name"
-  version = '1.0',      # Start with a small number and increase it with every change you make
+  version = VERSION,      # Start with a small number and increase it with every change you make
   license='New BSD (3-clause)',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'A package written in Python to perform CCN activity analysis.',   # Give a short description about your library
   author = 'Kanishk Gohil',                   # Type in your name
