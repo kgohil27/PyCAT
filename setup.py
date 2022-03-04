@@ -64,7 +64,7 @@ def _write_version_file():
 _write_version_file()
 
 setup(
-    name="PyCAT",
+    name="pyccntool",
     author="Kanishk Gohil",
     author_email="kgohil@umd.edu",
     maintainer="Kanishk Gohil",
