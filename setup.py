@@ -13,7 +13,7 @@ import os
 import warnings
 from textwrap import dedent
 
-MAJOR, MINOR = 1, 0
+MAJOR, MINOR = 1, 1
 DEV = True
 VERSION = "{}.{}".format(MAJOR, MINOR)
 
