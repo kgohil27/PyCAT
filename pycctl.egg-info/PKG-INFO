@@ -1,0 +1,24 @@
+Metadata-Version: 2.1
+Name: pycctl
+Version: 1.0.dev-0a9bffa
+Summary: A package written in Python to perform CCN activity analysis.
+Home-page: https://github.com/kgohil27/PyCAT
+Author: Kanishk Gohil
+Author-email: kgohil@umd.edu
+License: New BSD (3-clause)
+Download-URL: https://github.com/kgohil27/PyCAT/archive/refs/tags/v1.0.tar.gz
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Natural Language :: English
+Classifier: Operating System :: Unix
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Topic :: Scientific/Engineering :: Atmospheric Science
+License-File: LICENSE
+
+UNKNOWN
+
