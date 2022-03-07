@@ -46,7 +46,7 @@ extensions = [
 
 def _write_version_file():
 
-    fn = os.path.join(os.path.dirname(__file__), "PyCAT", "version.py")
+    fn = os.path.join(os.path.dirname(__file__), "pycat", "version.py")
 
     version_str = dedent(
         """
@@ -62,7 +62,7 @@ def _write_version_file():
 _write_version_file()
 
 setup(
-  name = 'pycctl',        # How you named your package folder (MyLib)
+  name = 'ccntl',        # How you named your package folder (MyLib)
   packages = ['pycat'],   # Chose the same as "name"
   version = VERSION,      # Start with a small number and increase it with every change you make
   license='New BSD (3-clause)',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
