@@ -228,9 +228,10 @@ class SMPS_data_process(object):
                                 plt.plot(dia_fit, RatioFit, 'black', '--')
                                 plt.plot(np.linspace(20, 120, 10), [0.5]*10, 'r--')
                                 plt.xlim([min(diaPlot)-5, max(diaPlot)+5])
-                                plt.ylim([-0.05, 1.1])
+                                plt.ylim(-0.05, 1.1)
                                 plt.xticks(fontsize=15)
-                                plt.yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+                                plt.yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+                                           [0.0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
                                 plt.xlabel('Mobility diameter (nm)', fontsize=15)
                                 plt.ylabel('$N_{CCN}/N_{CN}$', fontsize=15)
                                 plt.show()
