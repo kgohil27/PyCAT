@@ -1,6 +1,6 @@
 """
 Python-based CCN Analysis Toolkit (PyCAT)
-----------------------------
+-----------------------------------------
 This module implements a set of procedures requiured for CCN activity analysis
 of aerosols from their size-resolved number concentration measurements. CCN
 activity analysis performed using Kohler framework.
