@@ -124,12 +124,12 @@ analysis_timestamps = 'Timestamps_'+filebase+'.txt'  # metadata for the timestam
 
 ## 'offset' is an important parameter --> see the description in the calibration part of the process
 ## 'sigmoids' is the number of sigmoids --> default = 1
-SMPS_analysis_gen = fb.SMPS_data_process(analysis_dir, analysis_file, analysis_CPC_data,
+SMPS_analysis_gen = pycat.SMPS_data_process(analysis_dir, analysis_file, analysis_CPC_data,
                                          analysis_timestamps, offset=0, sigmoids=1, downscan='yes')
 analysis_data, analysis_sheet, analysis_fit = SMPS_analysis_gen.data_generation(start_dia=20, end_dia=150., flow_rate=1.05)
 
 ## Instrument (calibrated) supersaturation estimation
-analysis_data = fb.calibration(analysis_data, calib_fit_params)
+analysis_data = pycat.calibration(analysis_data, calib_fit_params)
 
 
 # # Writing the analysis data in the excel file
